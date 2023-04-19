@@ -1,0 +1,140 @@
+<html>
+
+<head>
+    <title></title>
+    <style>
+        canvas {
+            background-color: #dddf7d;
+        } 
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas" width="600" height="600"></canvas>  
+    <script> 
+    // obtener el canvas 
+    let canvas = document.getElementById("canvas"); 
+    let ctx = canvas.getContext("2d"); 
+
+    // Variables 
+    let x = canvas.width/4; 
+    let y = canvas.height-30; 
+    let dx = 2; 
+    let dy = -2; 
+    let ballRadius = 10; 
+
+    // controlador
+    let rightPressed = false; 
+    let leftPressed = false; 
+
+    // Asteroides 
+    let hasdelos = []; 
+    let hasdeloCount = 5; 
+    for(let i = 0; i < hasdeloCount; i++) { 
+        hasdelos[i] = { 
+            x: Math.random() * canvas.width, 
+            y: Math.random() * canvas.height, 
+            dx: Math.random() * 4 - 2, 
+            dy: Math.random() * 4 - 2
+        } 
+    }
+
+    // evento click 
+    document.addEventListener("keydown", keyDownHandler, false); 
+    document.addEventListener("keyup", keyUpHandler, false); 
+
+
+    // funciones 
+    function keyDownHandler(e) { 
+        if(e.keyCode == 39) { 
+            rightPressed = true; 
+        } else if(e.keyCode == 37) { 
+            leftPressed = true; 
+        } 
+    } 
+    function keyUpHandler(e) { 
+        if(e.keyCode == 39) { 
+            rightPressed = false; 
+        } else if(e.keyCode  == 37) { 
+            leftPressed = false; 
+        } 
+    } 
+
+    // crear la bola 
+    function drawBall() { 
+        ctx.beginPath(); 
+        ctx.arc(x, y, ballRadius, 0, Math.PI * 2); 
+        ctx.fillStyle = "#ff0000"; 
+        ctx.fill(); 
+        ctx.closePath(); 
+    } 
+    // crear el jugador 
+    function drawPlayer() { 
+        ctx.beginPath(); 
+        ctx.rect(x, y - 10, 20, 10); 
+        ctx.fillStyle = "#0095DD"; 
+        ctx.fill(); 
+        ctx.closePath(); 
+    }
+    // crear los asteroides
+    function drawAsteroids() { 
+        for(let i = 0; i < hasdeloCount; i++) { 
+            ctx.beginPath(); 
+            ctx.arc(hasdelos[i].x, hasdelos[i].y, 15, 0, Math.PI * 2); 
+            ctx.fillStyle = "#8903fe"; 
+            ctx.fill(); 
+            ctx.closePath(); 
+        }     
+    }
+    function draw() { 
+        // limpiar la pantalla 
+        ctx.clearRect(0, 0, canvas.width, canvas.height); 
+        // crear los objetos 
+        drawAsteroids();
+        drawPlayer();
+        drawBall();
+        // mover los objetos 
+        for(let i = 0; i < hasdeloCount; i++) { 
+            hasdelos[i].x += hasdelos[i].dx; 
+            hasdelos[i].y += hasdelos[i].dy; 
+            // detectar las colisiones 
+            if(x + dx > hasdelos[i].x && 
+            x + dx < hasdelos[i].x + 15 && 
+            y + dy > hasdelos[i].y && 
+            y + dy < hasdelos[i].y + 15) { 
+                alert("Game Over!!!"); 
+                location.reload(); 
+            }     
+        } 
+        // mover la bola 
+        x += dx; 
+        y += dy; 
+
+        // controlador 
+        if(rightPressed && x < canvas.width - ballRadius) { 
+            x += 7; 
+        } else if(leftPressed && x > ballRadius) { 
+            x -=7; 
+        }   
+
+        // rebotar en los bordes 
+        if(x + dx > canvas.width - ballRadius || 
+            x + dx < ballRadius) { 
+            dx = -dx; 
+        } 
+        if(y + dy < ballRadius) { 
+            dy = -dy; 
+        } else if (y + dy > canvas.height - ballRadius) { 
+            if(x > playerX && x < playerX + 20) { 
+                dy = -dy; 
+            } else { 
+                alert("Game Over!!!"); 
+                location.reload(); 
+            } 
+        }    
+    }
+
+    setInterval(draw, 10); 
+
+    </script>
+</body>
