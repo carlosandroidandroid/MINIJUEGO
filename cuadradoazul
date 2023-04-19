@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Juego Simple</title>
+	<style>
+		#gameboard {
+			width: 300px;
+			height: 300px;
+			background-color: #eee;
+			position: relative;
+		}
+		
+		#player {
+			width: 50px;
+			height: 50px;
+			background-color: blue;
+			position: absolute;
+			left: 125px;
+			bottom: 25px;
+		}
+		
+		#enemy {
+			width: 50px;
+			height: 50px;
+			background-color: red;
+			position: absolute;
+			top: 25px;
+			left: 125px;
+			animation: enemy-move 2s infinite;
+		}
+		
+		@keyframes enemy-move {
+			0% {
+				left: 25px;
+			}
+			50% {
+				left: 250px;
+			}
+			100% {
+				left: 25px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div id="gameboard">
+		<div id="player"></div>
+		<div id="enemy"></div>
+	</div>
+	<script>
+		document.addEventListener('keydown', function(event) {
+			if (event.code === 'ArrowLeft') {
+				document.getElementById('player').style.left = parseInt(document.getElementById('player').style.left) - 10 + 'px';
+			} else if (event.code === 'ArrowRight') {
+				document.getElementById('player').style.left = parseInt(document.getElementById('player').style.left) + 10 + 'px';
+			}
+		});
+		
+		function checkCollisions() {
+			var player = document.getElementById('player');
+			var enemy = document.getElementById('enemy');
+			var playerRect = player.getBoundingClientRect();
+			var enemyRect = enemy.getBoundingClientRect();
+			
+			if (playerRect.bottom >= enemyRect.top && playerRect.top <= enemyRect.bottom && playerRect.right >= enemyRect.left && playerRect.left <= enemyRect.right) {
+				alert('¡Perdiste!');
+				location.reload();
+			}
+		}
+		
+		setInterval(checkCollisions, 10);
+	</script>
+</body>
+</html>
